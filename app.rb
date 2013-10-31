@@ -4,6 +4,7 @@ require 'sinatra/activerecord'
 require 'json'
 require 'net/http'
 require 'models/user'
+require 'models/playlist'
 require 'config/dotenv_helper'
 require 'config/omniauth_helper'
 require 'playlist_creator'
@@ -24,6 +25,7 @@ get '/' do
     @desired_mood  = "happy"
     @style = "pop"
     @container_id = "home"
+    @saved_playlists = get_playlists
     erb :home
   end
 end
@@ -46,14 +48,32 @@ get '/logout' do
 end
 
 get '/search' do
-  @songs = PlaylistCreator.get_playlist(params)
-  @current_mood  = params[:current_mood]
-  @desired_mood  = params[:desired_mood]
-  @style = params[:style]
+  if params[:saved_playlist]
+    playlist = current_user.playlists.find_by(name: params[:saved_playlist])
+    @spotify_url = playlist.playlist_url
+    get_playlist_name(params[:saved_playlist])
+  else
+    songs = PlaylistCreator.get_playlist(params)
+    @spotify_url = "https://embed.spotify.com/?uri=spotify:trackset:Your customized playlist:#{songs.join(',')}"
+    @current_mood  = params[:current_mood]
+    @desired_mood  = params[:desired_mood]
+    @style = params[:style]
+  end
   @first_name = get_first_name
+  @user_id = get_user_id
   @profile_pic_url = get_profile_pic
   @container_id =""
+  @saved_playlists = get_playlists
   erb :home
+end
+
+post '/saveplaylist' do
+  date = DateTime.now
+  user = User.find(params[:user_id])
+
+  playlist = Playlist.create(playlist_url: params[:playlist_url], name: "#{date.strftime('%m.%d.%y')} | #{params[:playlist_name]}")
+  user.playlists << playlist
+  playlist.name
 end
 
 
@@ -64,13 +84,30 @@ helpers do
   end
 
   def get_first_name
-    user = User.find_by_facebook_uid(session[:facebook_uid])
-    user.first_name
+    current_user.first_name
+  end
+
+  def get_user_id
+    current_user.id
   end
 
   def get_profile_pic
-    user = User.find_by_facebook_uid(session[:facebook_uid])
-    user.profile_pic_url
+    current_user.profile_pic_url
+  end
+
+  def get_playlists
+    current_user.playlists
+  end
+
+  def current_user
+    current_user = current_user || User.find_by_facebook_uid(session[:facebook_uid]) unless is_not_logged_in?
+  end
+
+  def get_playlist_name(playlist_name)
+    playlist_array = playlist_name.split(" ")
+    @current_mood = playlist_array[4]
+    @desired_mood = playlist_array[6]
+    @style = playlist_array[2]
   end
 
 end

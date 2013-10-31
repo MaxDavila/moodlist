@@ -12,15 +12,15 @@
 
   <div class="leftBar">
     <h3> Search by mood and genre: </h3>
-    <form  id="gimmesongs" action="/search" method="get">
+    <form id="gimmesongs" action="/search" method="get">
 
       <div>
         <label>  Current mood: </label>
         <select name="current_mood"><%= erb :_current_mood_options %></select>
-      </div>      
-      
+      </div>
+
       <div>
-        <label> Desired mood:</label> 
+        <label> Desired mood:</label>
         <select name="desired_mood"><%= erb :_desired_mood_options %></select>
       </div>
       <div>
@@ -32,19 +32,33 @@
       </div>
     </form>
 
+    <div id="playlist-select-div">
+      <form method="get" action="/search" id="playlist-select-form">
+        <select name="saved_playlist" id="playlist-selector">
+          <option selected="selected">Load a saved playlist</option>
+          <% @saved_playlists.each do |playlist| %>
+            <option><%= playlist.name %></option>
+          <% end %>
+        </select>
+      </form>
+    </div>
 
-    <% if @songs %>
-    <h3><%=@style%> | <%=@current_mood%> to  <%=@desired_mood%>:</h3>
+    <% if @spotify_url %>
+    <div id="playlist-header">
+      <h3 id="playlist-title"><%=@style%> | <%=@current_mood%> to  <%=@desired_mood%></h3>
+      <div id="save">
+        <form id="save_playlist" action="/saveplaylist" method="post">
+          <input name="user_id" type="hidden" value="<%=@user_id%>">
+          <input name="playlist_url" type="hidden" value="<%= @spotify_url %>">
+          <input name="playlist_name" type="hidden" value="<%=@style%> | <%=@current_mood%> to <%=@desired_mood%>">
+          <input id="savebutton" class="button submit" type="submit" value="Save!">
+        </form>
+      </div>
+    </div>
 
-    <iframe id="iframe" src="https://embed.spotify.com/?uri=spotify:trackset:Your customized playlist:<%= @songs.join(',') %>" frameborder='0' allowtransparency='false' height='380' >
+    <iframe id="iframe" src="<%= @spotify_url %>" frameborder='0' allowtransparency='false' height='380' >
     </iframe>
     <%end%>
-    <style type="text/css">
-    .jspHorizontalBar {
-      background: black;
-      opacity: 0;
-    }
-    </style>
   </div>
   <div class ="loading_div">
     <h3 id="loading_message">Creating your custom playlist...<h3>

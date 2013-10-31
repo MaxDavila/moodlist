@@ -1,9 +1,11 @@
 moodlist
 ========
 
-SMURFS:
+Create your own customized playlist based on style, as well as beginning and end mood. Utilizes the Echonest and Spotify API, as well as multi-threading to process requests.
 
--User can login w/ facebook
--User can request a playlist in 1 or more genres
--User can input cuurent mood and desired mood
--Use echonest API to create playlist
+Live at [moodlist.herokuapp.com](http://moodlist.herokuapp.com).
+
+To run locally:
+* Bundle neccesary gems: `$ bundle`
+* Migrate database: `$ rake db:migrate`
+* Run server via shotgun: `$ shotgun`
