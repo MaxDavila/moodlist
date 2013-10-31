@@ -10,10 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131003191415) do
+ActiveRecord::Schema.define(version: 20131031192401) do
 
   create_table "playlists", force: true do |t|
-    t.string   "playlist_url"
+    t.text     "playlist_url"
     t.string   "name"
     t.integer  "user_id"
     t.datetime "created_at"
