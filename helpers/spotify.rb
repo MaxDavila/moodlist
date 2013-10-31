@@ -31,10 +31,10 @@ module Spotify
 				artist = URI::escape(artist).gsub(/&/, "and")
 				uri = "http://ws.spotify.com/search/1/track.json?q="
 				request = URI("#{uri}#{artist}")
-				requests << Typhoeus::Request.new(request) 
+				requests << Typhoeus::Request.new(request)
 			end
 		end
-		
+
 		requests.each { |request| hydra.queue(request)}
 		hydra.run
 		artist_array = requests.map { |request| JSON.parse(request.response.response_body) }

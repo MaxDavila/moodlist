@@ -7,8 +7,8 @@ require 'models/user'
 require 'models/playlist'
 require 'config/dotenv_helper'
 require 'config/omniauth_helper'
-require 'playlist_creator'
-require 'option_arrays'
+require 'helpers/playlist_creator'
+require 'helpers/option_arrays'
 
 set :database, ENV["DATABASE_URL"] || 'sqlite3:///moodlist.db'
 
