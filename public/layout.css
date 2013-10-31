@@ -154,9 +154,6 @@ h1 {
   right: 0px;
 }
 
-#savebutton {
-  margin: 0;
-}
 
 
 
@@ -190,6 +187,18 @@ h1 {
   background: #114377;/* #175595*/
 }
 
+#savebutton {
+  margin: 0;
+}
+
+#savebutton:disabled {
+  color: #949494;
+}
+
+#savebutton:disabled:hover {
+  color: #949494;
+  background:#175595;
+}
 
 .button.facebook {
   display: block;
