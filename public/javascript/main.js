@@ -21,7 +21,7 @@ $('#savebutton').click(function(e){
   e.preventDefault();
   $.post("/saveplaylist", $("#save_playlist").serialize(), function(response){
       $("#savebutton").attr('value', 'Saved!')
-      $("#savebutton").css('color','#949494')
+      $("#savebutton").attr('disabled', 'disabled')
       $('#playlist-selector').append("<option>" + response + "</option>")
     })
 })

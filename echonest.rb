@@ -15,9 +15,9 @@ module Echonest
         "&sort=song_hotttnesss-desc"
         uri_address = URI(URI.encode(uri_string))
     end
-   
-    def self.get_songs(current_mood,desired_mood, style)
-        mood_hash = {
+
+    def self.get_mood_hash
+        {
             3 => 0.1,
             2.8 => 0.3,
             2.6 => 0.5,
@@ -35,12 +35,13 @@ module Echonest
             0.2 => 2.9,
             0 => 3.1
         }
+    end
 
+    def self.get_songs(current_mood,desired_mood, style)
         hydra = Typhoeus::Hydra.new
-        echonest_uris = mood_hash.map do |x,y|
+        echonest_uris = get_mood_hash.map do |x,y|
           prepare_uri(current_mood,desired_mood,style,x, y)
         end
-
         requests = echonest_uris.map { |uri| Typhoeus::Request.new(uri) }
         requests.each { |request| hydra.queue(request)}
         hydra.run
