@@ -15,7 +15,7 @@ module Echonest
     URI(URI.encode(uri_string))
   end
 
-  def self.get_song_array(echonest_responses)
+  def self.parse_responses(echonest_responses)
     song_array = echonest_responses.map { |echonest_response| JSON.parse(echonest_response) }
     song_array.map { |song| song["response"]["songs"] }
   end
@@ -24,22 +24,27 @@ module Echonest
     3.1 - x
   end
 
-  def self.get_songs(current_mood,desired_mood, style)
+  def self.prepare_echonest_uris(current_mood, desired_mood, style)
     current_mood_level = 3.0
     interval = 0.2
     echonest_uris = []
 
     while current_mood_level > 0
       desired_mood_level = get_desired_mood_level(current_mood_level)
-      echonest_uris << prepare_uri(current_mood,desired_mood,style, current_mood_level, desired_mood_level)
-      p current_mood_level -= interval
+      echonest_uris << prepare_uri(current_mood, desired_mood, style, current_mood_level, desired_mood_level)
+      current_mood_level -= interval
     end
+    echonest_uris
+  end
+
+  def self.get_songs(current_mood, desired_mood, style)
+    echonest_uris = prepare_echonest_uris(current_mood, desired_mood, style)
     echonest_responses = []
 
     echonest_uris.map do |uri|
       Thread.new { echonest_responses << Net::HTTP.get(uri) }
     end.each { |thread| thread.join }
-    get_song_array(echonest_responses)
+    parse_responses(echonest_responses)
   end
 
 end
