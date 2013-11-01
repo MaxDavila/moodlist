@@ -1,6 +1,5 @@
 $LOAD_PATH.unshift(File.expand_path('.'))
 require 'models/song'
-require 'typhoeus'
 module Spotify
 
 	def self.check_if_spotify_has_song(all_tracks, song_title)
